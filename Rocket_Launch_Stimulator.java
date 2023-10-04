@@ -54,6 +54,20 @@ public class Rocket_Launch_Stimulator {
                     System.out.println("Cannot launch. Pre-launch checks have not been completed or passed.");
                 }
             }
+            // fast forward command
+            if (userInput.startsWith("fast_forward ")) {
+                try {
+                    int fastForwardSeconds = Integer.parseInt(userInput.split(" ")[2]);
+                    if (fastForwardSeconds > 0) {
+                        //execute for x second
+                        startRocketDataUpdaterFastForward(fastForwardSeconds);
+                    } else {
+                        System.out.println("Invalid input for fast forward. Please specify a positive number of seconds.");
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Invalid input for fast forward. Please use 'fast forward x' where x is the number of seconds.");
+                }
+            }
 
         }
         scanner.close();
@@ -149,5 +163,20 @@ public class Rocket_Launch_Stimulator {
     private static void processUserInput(String userInput) {
         // user input command
         System.out.println("User input: " + userInput);
+    }
+    private static void startRocketDataUpdaterFastForward(int fastForwardSeconds) {
+        long startTime = System.currentTimeMillis();
+        long lastUpdateTime = startTime;
+
+        while (true) {
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = (currentTime - startTime) / 1000; // seconds
+
+            if (elapsedTime >= fastForwardSeconds) {
+                //to display
+                new UpdateTask().run();
+                break;
+            }
+        }
     }
 }
