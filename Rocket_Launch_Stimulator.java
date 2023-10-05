@@ -165,18 +165,33 @@ public class Rocket_Launch_Stimulator {
         System.out.println("User input: " + userInput);
     }
     private static void startRocketDataUpdaterFastForward(int fastForwardSeconds) {
-        long startTime = System.currentTimeMillis();
-        long lastUpdateTime = startTime;
-
-        while (true) {
-            long currentTime = System.currentTimeMillis();
-            long elapsedTime = (currentTime - startTime) / 1000; // seconds
-
-            if (elapsedTime >= fastForwardSeconds) {
-                //to display
-                new UpdateTask().run();
-                break;
-            }
+        while (fastForwardSeconds!=0)
+        {
+            altitude += 10;
+            velocity += 1000;
+            fuelLevel -= 10;
+            fastForwardSeconds--;
         }
+        
+        int newStage=0;
+        double[] stageThresholds = { 25, 50, 75, 100 };
+        for (int i = 0; i < stageThresholds.length; i++) {
+                if (altitude <= stageThresholds[i]) {
+                    newStage=i+1;
+                    break;
+                }
+        }
+        if (newStage != stage) {
+        stage = newStage;
+        }
+             
+                System.out.println("Stage: " + stage);
+                System.out.println("Fuel Level: " + fuelLevel + "%");
+                System.out.println("Altitude: " + altitude + " km");
+                System.out.println("Speed: " + velocity + " km/h");
+                System.out.println("-------------------------");
+            
+
     }
+      
 }
