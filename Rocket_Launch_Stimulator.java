@@ -33,7 +33,7 @@ public class Rocket_Launch_Stimulator {
             if (userInput.equalsIgnoreCase("start_checks")) {
                 if (!preLaunchChecksPassed) {
                     // Perform prelaunch check
-                    boolean launchReady = performPreLaunchChecks(scanner);
+                    boolean launchReady = performPreLaunchChecks();
 
                     if (launchReady) {
                         preLaunchChecksPassed = true;
@@ -119,7 +119,7 @@ public class Rocket_Launch_Stimulator {
         }
     }
 
-    private static boolean performPreLaunchChecks(Scanner scanner) {
+    private static boolean performPreLaunchChecks() {
 
         boolean weatherCriteria = checkWeather();
         boolean Fuel_Level = checkFuel_Level();
