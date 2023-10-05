@@ -6,11 +6,13 @@ public class Rocket_Launch_Stimulator {
     private static final int UPDATE_INTERVAL_MS = 1000; // 1 second
 
     // data to be displayed
+    private static double destination=100;
     private static int stage = 1;
     private static double altitude = 0.0;
-    private static double velocity = 0.0;
-    private static double fuelLevel = 100.0;
+    private static double velocity = -24.0;
+    private static double fuelLevel = 500.0;
     private static boolean preLaunchChecksPassed = false;
+    
 
     public static void main(String[] args) {
 
@@ -38,7 +40,8 @@ public class Rocket_Launch_Stimulator {
                     if (launchReady) {
                         preLaunchChecksPassed = true;
                     } else {
-                        System.out.println("Launch postponed due to failed pre-launch checks.");
+                        System.out.println("Mission failed");
+                        System.exit(0); // Terminate
                     }
                 } else {
                     System.out.println("Pre-launch checks have already been started.");
@@ -71,15 +74,18 @@ public class Rocket_Launch_Stimulator {
 
         }
         scanner.close();
+        double[] stageThresholds = calculateStageThresholds(destination);
+        stageThresholds = calculateStageThresholds(destination);
+        
     }
 
     private static class UpdateTask extends TimerTask {
         @Override
         public void run() {
             // checks for destination
-            if (altitude >= 100 || fuelLevel < 0) {
+            if (altitude >= destination || fuelLevel <= 0) {
                 cancel(); // timmer stop
-                if (altitude == 100) {
+                if (altitude == destination) {
                     System.out.println("Orbit achieved.Mission Successful");
                 } else {
                     System.out.println("Mission Failed");
@@ -90,7 +96,7 @@ public class Rocket_Launch_Stimulator {
                 // Simulation
                 altitude += 10;
                 velocity += 1000;
-                fuelLevel -= 10;
+                fuelLevel -=5;
                 System.out.println("Stage: " + stage);
                 System.out.println("Fuel Level: " + fuelLevel + "%");
                 System.out.println("Altitude: " + altitude + " km");
@@ -100,24 +106,37 @@ public class Rocket_Launch_Stimulator {
                 int newStage = calculateStage(altitude);
                 if (newStage != stage) {
                     stage = newStage;
-                    System.out
-                            .println("Stage " + (stage - 1) + " completed. Separating stage. Entering stage " + stage);
+                    System.out.println("Stage " + (stage - 1) + " completed. Separating stage. Entering stage " + stage);
                 }
             }
         }
-
-        private int calculateStage(double currentAltitude) {
-            // range for 4 stages
-            double[] stageThresholds = { 25, 50, 75, 100 };
-            for (int i = 0; i < stageThresholds.length; i++) {
-                if (currentAltitude <= stageThresholds[i]) {
-                    return i + 1;
-                }
-            }
-
-            return stageThresholds.length + 1;
+        
+    }
+   private static int calculateStage(double currentAltitude) {
+    // range for 4 stages
+    double[] stageThresholds = calculateStageThresholds(destination);
+    for (int i = 0; i < stageThresholds.length; i++) {
+        if (currentAltitude <= stageThresholds[i]) {
+            return i + 1;
         }
     }
+
+    return stageThresholds.length + 1;
+}
+
+    private static double[] calculateStageThresholds(double maxAltitude) {
+        int numStages = 4; // You can change the number of stages as needed
+        double[] thresholds = new double[numStages];
+        double step = maxAltitude / numStages;
+
+        for (int i = 0; i < numStages; i++) {
+            thresholds[i] = step * (i + 1);
+        }
+
+        return thresholds;
+    }
+
+   
 
     private static boolean performPreLaunchChecks() {
 
@@ -129,14 +148,20 @@ public class Rocket_Launch_Stimulator {
         System.out.println("1. Weather Criteria: " + (weatherCriteria ? "Go" : "No-Go"));
         System.out.println("2. Fuel Level: " + (Fuel_Level ? "Go" : "No-Go"));
         System.out.println("3. Safety Criteria: " + (safetyCriteria ? "Go" : "No-Go"));
-
-        if (weatherCriteria && Fuel_Level && safetyCriteria) {
-            System.out.println("\nAll criteria are met. Go for launch.");
-            return true;
-        } else {
+        
+        if (altitude < 0 || velocity < 0 || fuelLevel < 0) {
+            System.out.println("Negative altitude, velocity, or fuel level detected. Mission failed.");
+            return false;
+        }
+        else if(!(weatherCriteria && Fuel_Level && safetyCriteria)) {
             System.out.println("\nOne or more criteria are not met. Launch is postponed (No-Go).");
             return false;
         }
+
+        else {
+            System.out.println("\nAll criteria are met. Go for launch.");
+            return true;
+        } 
     }
 
     private static boolean checkWeather() {
@@ -148,7 +173,9 @@ public class Rocket_Launch_Stimulator {
     private static boolean checkFuel_Level() {
         // checks fuel level
         System.out.println("Checking technical readiness...");
-        if (fuelLevel == 100) {
+       double distance= destination/10;
+       double fuel=distance*0.5;
+        if (fuel <= fuelLevel) {
             return true;
         }
         return false;
@@ -194,4 +221,5 @@ public class Rocket_Launch_Stimulator {
 
     }
       
-}
+    }
+
