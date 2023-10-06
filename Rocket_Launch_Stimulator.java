@@ -58,9 +58,9 @@ public class Rocket_Launch_Stimulator {
                 }
             }
             // fast forward command
-            if (userInput.startsWith("fast forward ")) {
+            if (userInput.startsWith("fast_forward ")) {
                 try {
-                    int fastForwardSeconds = Integer.parseInt(userInput.split(" ")[2]);
+                    int fastForwardSeconds = Integer.parseInt(userInput.split(" ")[1]);
                     if (fastForwardSeconds > 0) {
                         //execute for x second
                         startRocketDataUpdaterFastForward(fastForwardSeconds);
