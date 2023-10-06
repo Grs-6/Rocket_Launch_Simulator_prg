@@ -9,7 +9,7 @@ public class Rocket_Launch_Stimulator {
     private static double destination=100;
     private static int stage = 1;
     private static double altitude = 0.0;
-    private static double velocity = -24.0;
+    private static double velocity = 0.0;
     private static double fuelLevel = 500.0;
     private static boolean preLaunchChecksPassed = false;
     
@@ -70,6 +70,9 @@ public class Rocket_Launch_Stimulator {
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     System.out.println("Invalid input for fast forward. Please use 'fast forward x' where x is the number of seconds.");
                 }
+            }
+            else{
+                System.out.println("Enter a valid input");
             }
 
         }
@@ -192,6 +195,13 @@ public class Rocket_Launch_Stimulator {
         System.out.println("User input: " + userInput);
     }
     private static void startRocketDataUpdaterFastForward(int fastForwardSeconds) {
+         if(fastForwardSeconds>=10)
+       {
+           altitude=destination;
+           velocity=destination*1000;
+           fuelLevel-=(destination*0.5);
+       }
+        else{
         while (fastForwardSeconds!=0)
         {
             altitude += 10;
@@ -199,18 +209,11 @@ public class Rocket_Launch_Stimulator {
             fuelLevel -= 10;
             fastForwardSeconds--;
         }
-        
-        int newStage=0;
-        double[] stageThresholds = { 25, 50, 75, 100 };
-        for (int i = 0; i < stageThresholds.length; i++) {
-                if (altitude <= stageThresholds[i]) {
-                    newStage=i+1;
-                    break;
+        }
+        int newStage = calculateStage(altitude);
+                if (newStage != stage) {
+                    stage = newStage;
                 }
-        }
-        if (newStage != stage) {
-        stage = newStage;
-        }
              
                 System.out.println("Stage: " + stage);
                 System.out.println("Fuel Level: " + fuelLevel + "%");
